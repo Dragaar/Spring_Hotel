@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 public class Apartment implements Serializable {
 

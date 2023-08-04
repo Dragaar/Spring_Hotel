@@ -14,7 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @ToString(exclude = {"account", "apartment"})
 public class Booking implements Serializable {
 
@@ -36,6 +36,7 @@ public class Booking implements Serializable {
     //Auto-Generated
     @Column(name = "reservation_data")
     private Timestamp reservationData;
+
     @Column(name = "is_paid_for_reservation")
     private Boolean isPaidForReservation = false;
 
@@ -43,6 +44,7 @@ public class Booking implements Serializable {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
     @ManyToOne
     @JoinColumn(name = "apartment_id")
     private Apartment apartment;

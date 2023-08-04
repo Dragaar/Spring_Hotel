@@ -13,7 +13,7 @@ import java.sql.Date;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 public class Order implements Serializable {
 
