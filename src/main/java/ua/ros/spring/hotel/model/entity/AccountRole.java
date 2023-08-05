@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Rostyslav Ivanyshyn.
  */
 public enum AccountRole implements GrantedAuthority {
-        USER, MANAGER, UNKNOWN;
+        ROLE_USER, ROLE_MANAGER, ROLE_UNKNOWN;
 
         @Override
         public String getAuthority() {
