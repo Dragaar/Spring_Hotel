@@ -2,24 +2,27 @@ package ua.ros.spring.hotel.model.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.stereotype.Repository;
 import ua.ros.spring.hotel.model.entity.Account;
+import ua.ros.spring.hotel.model.entity.QAccount;
 
 import java.util.Optional;
+
 
 /**
  * Account DAO interface.
  *
  * @author Rostyslav Ivanyshyn.
  */
-public interface AccountRepository extends JpaRepository<Account, Long> {
-
-    @Query("SELECT Account FROM Account WHERE ?1 = ?2")
-    Optional<Account> findByField(String field, Object value);
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long>, QuerydslPredicateExecutor<QAccount> {
 
     Optional<Account> findByEmail(String email);
-
-    @Query("SELECT Account FROM Account WHERE ?1 = ?2")
-   Optional<Account> update(String field, Object value);
+    @Modifying(flushAutomatically = true)
+    @Query(value = "DELETE FROM account WHERE id = ?1", nativeQuery = true)
+    int costumDeleteById(Long id);
 
 }

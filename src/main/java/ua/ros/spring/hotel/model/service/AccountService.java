@@ -1,8 +1,12 @@
 package ua.ros.spring.hotel.model.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ua.ros.spring.hotel.model.entity.Account;
 
 import java.sql.Connection;
+import java.util.Optional;
+import com.querydsl.core.types.Predicate;
 
 /**
  * Account Service interface.
@@ -26,12 +30,19 @@ public interface AccountService {
     Boolean         isAccountExist(Account account);
 
     /**
-     * Find account by field
-     * @param field field name
-     * @param value unique field value
+     * Find account by predicate
+     * @param p conditions to receive account
      * @return found account
      */
-    Account         findAccountByField(String field, Object value);
+    Optional<Account>   findOne(Predicate p);
+
+    /**
+     * Find accounts by predicate
+     * @param p conditions to receive accounts
+     * @param pageable conditions to perform paginating
+     * @return page with accounts
+     */
+    Page<Account> findAll(Predicate p, Pageable pageable);
 
     /**
      * Update account
