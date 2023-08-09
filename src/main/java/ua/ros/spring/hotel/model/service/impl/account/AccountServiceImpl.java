@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import ua.ros.spring.hotel.model.entity.Account;
-import ua.ros.spring.hotel.model.entity.QAccount;
 import ua.ros.spring.hotel.model.repository.AccountRepository;
 import ua.ros.spring.hotel.model.service.AccountService;
 
@@ -51,16 +50,18 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional(readOnly=true)
     @Override
+    @SuppressWarnings("unchecked")
     public Optional<Account> findOne(Predicate predicate) {
-        Optional<QAccount> qAccount = accountRepository.findOne(predicate);
-        return qAccount.map(qAcc -> modelMapper.map(qAcc, Account.class));
+        Object reflectionObject = accountRepository.findOne(predicate);
+        return (Optional<Account>) reflectionObject;
     }
 
     @Transactional(readOnly=true)
     @Override
+    @SuppressWarnings("unchecked")
     public Page<Account> findAll(Predicate predicate, Pageable pageable) {
-        Page<QAccount> qAccounts = accountRepository.findAll(predicate, pageable);
-        return qAccounts.map(qAcc -> modelMapper.map(qAcc, Account.class));
+        Object reflectionObject = accountRepository.findAll(predicate, pageable);
+        return (Page<Account>) reflectionObject;
     }
 
     @Override
