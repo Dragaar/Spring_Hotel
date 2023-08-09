@@ -5,7 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.ros.spring.hotel.model.entity.Apartment;
 
-import java.util.ArrayList;
+import java.util.Optional;
+import com.querydsl.core.types.Predicate;
 
 /**
  * Apartment Service interface.
@@ -22,35 +23,27 @@ public interface ApartmentService {
     Boolean                  createApartment(Apartment apartment);
 
     /**
-     * Find apartment by field
-     * @param field field name
-     * @param value unique field value
+     * Find apartment by predicate
+     * @param p conditions to receive apartment
      * @return found apartment
      */
-    Apartment                findApartmentByField(String field, Object value);
+    Optional<Apartment>      findOne(Predicate p);
 
     /**
-     * Find few apartments by total count and from set start id
-     * @param pageable
-     * @return found apartments
+     * Find apartments by predicate
+     * @param p conditions to receive apartments
+     * @param pageable conditions to perform paginating
+     * @return page with apartments
      */
-    Page<Apartment>     findApartments(Pageable pageable);
+    Page<Apartment>          findAll(Predicate p, Pageable pageable);
     /**
-     * Find few apartments using direct search algorithm by total count and from set start id
-     * @param value user value
-     * @param start countdown start id
-     * @param total total rows count
-     * @return found apartments
+     * Find few apartments using direct search algorithm by relevance.
+     * <br> Include tag functionality to regulate relevancy and result set
+     * @param pageable conditions to perform paginating
+     * @param searchValue user value
+     * @return page with apartments
      */
-   ArrayList<Apartment> searchApartment(String value, int start, int total);
-
-    /**
-     * Find few apartments using second query part conditions and by fields for them
-     * @param secondQueryPart QueryBuilder result string
-     * @param fields fields to insert in second query part statement
-     * @return found apartments
-     */
-   ArrayList<Apartment>     findFewApartmentsAndSort(String secondQueryPart, String... fields);
+    Page<Apartment>         searchApartments(Pageable pageable, String searchValue);
 
     /**
      * Update apartment

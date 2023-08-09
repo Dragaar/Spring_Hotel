@@ -1,47 +1,77 @@
 package ua.ros.spring.hotel.model.repository;
 
 
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import ua.ros.spring.hotel.model.entity.Account;
-import ua.ros.spring.hotel.model.entity.Apartment;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
+import ua.ros.spring.hotel.model.entity.Apartment;
+import ua.ros.spring.hotel.model.entity.QApartment;
+
 
 /**
  * Apartment DAO interface.
  *
  * @author Rostyslav Ivanyshyn.
  */
-public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
+@Repository
+public interface ApartmentRepository extends JpaRepository<Apartment, Long>, QuerydslPredicateExecutor<QApartment> {
 
-    @Query("SELECT Apartment FROM Apartment WHERE ?1 LIKE ?2")
-    Optional<Apartment> findByField(String field, Object value);
-    /** Get a list of unique booked apartments and apply to them query-builder part (Sorting, limits, etc.)
+    /**
+     * Get a page of unique booked apartments
+     * @param pageable conditions to perform paginating
+     * @return page with apartments
      *
-     * @param con connection to database
-     * @param secondQueryPart query builder string part
-     * @param fields fields for insertion in query builder string part statement
-     * @return ArrayList  result array
      */
-    //ArrayList<Apartment>        getUniqueApartmentsWhichAreBookedWithDynamicQuery(Connection con, String secondQueryPart, Object... fields);
+    @Query(value = "SELECT SQL_CALC_FOUND_ROWS * FROM apartment "+
+                    "INNER JOIN (SELECT DISTINCT apartment.`id` as inner_id FROM apartment " +
+                                 "INNER JOIN booking ON booking.`apartment_id` = apartment.`id` " +
+                                 "WHERE `booking`.`check_in_date` >= CURRENT_DATE() " +
+                                       "OR `booking`.`check_out_date` >= CURRENT_DATE() " +
+                    ") AS a2 " +
+                    "ON apartment.`id` = a2.inner_id ",
+             countQuery = " SELECT FOUND_ROWS() AS count ",
+            nativeQuery = true)
+    Page<Apartment> findAllApartmentsWhichAreBooked(Pageable pageable);
 
-    /** Get a list of unique free (not booked in the future), available (state is true) apartments
-     *
-     * @param con connection to database
-     * @param secondQueryPart query builder string part
-     * @param fields fields for insertion in query builder string part statement
-     * @return ArrayList  result array
+     /**
+     * Get a page of unique free (not booked in the future), available (state is true) apartments
+     * @param pageable conditions to perform paginating
+     * @return page with apartments
      */
-    //ArrayList<Apartment>        getUniqueApartmentsWhichAreFree(Connection con, String secondQueryPart, Object... fields);
+     @Query(value = "SELECT SQL_CALC_FOUND_ROWS * FROM apartment "+
+             "WHERE apartment.`id` NOT IN (SELECT DISTINCT `apartment`.`id` as inner_id FROM apartment " +
+             "INNER JOIN `booking` booking ON booking.`apartment_id` = `apartment`.`id` " +
+             "WHERE `booking`.`check_in_date` >= CURRENT_DATE() OR `booking`.`check_out_date` >= CURRENT_DATE() " +
+             ") AND apartment.state = 1 ",
+             countQuery = " SELECT FOUND_ROWS() AS count ",
+             nativeQuery = true)
+    Page<Apartment>        findAllApartmentsWhichAreFree(Pageable pageable);
+
+    Page<QApartment> findAll(Predicate predicate, Pageable pageable);
+
 
     /** Get objects using direct search algorithms from respective table by relevance.
      * <br> Include tag functionality to regulate relevancy and result set
-     * @param con connection to database
-     * @param value user value
-     * @return ArrayList<T> result array
+     * @param pageable conditions to perform paginating
+     * @param search_value user value
+     * @return page with apartments
      */
-    //ArrayList<Apartment> searchApartments(Connection con, String value, int start, int total);
+    @Query(value = "SELECT SQL_CALC_FOUND_ROWS *, " +
+            "MATCH(`title`, `description`, `address`, `apartment_class`) AGAINST(:search_value IN BOOLEAN MODE) AS REL " +
+            "FROM apartment " +
+            "WHERE MATCH(`title`, `description`, `address`, `apartment_class`) AGAINST(:search_value IN BOOLEAN MODE) " +
+            "ORDER BY REL DESC ",
+            countQuery = " SELECT FOUND_ROWS() AS count ",
+            nativeQuery = true)
+    Page<Apartment> searchApartments(Pageable pageable, String search_value);
+
+    @Modifying(flushAutomatically = true)
+    @Query(value = "DELETE FROM apartment WHERE id = ?1", nativeQuery = true)
+    int costumDeleteById(Long id);
 }
