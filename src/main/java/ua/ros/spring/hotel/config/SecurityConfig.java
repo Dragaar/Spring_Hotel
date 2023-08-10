@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ua.ros.spring.hotel.model.repository.AccountRepository;
-import ua.ros.spring.hotel.model.service.impl.account.AccountDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -17,21 +15,8 @@ import ua.ros.spring.hotel.model.service.impl.account.AccountDetailsService;
 public class SecurityConfig {
 
     private static final String LOGIN = "/auth/login";
-    private static final String[] ALLOWED_URLS = {LOGIN, "/auth/registration", "/error", "/", "/contacts"};
-
-
-   /* AccountDetailsService accountDetailsService;
-
-    @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-
-        authenticationManagerBuilder.userDetailsService(accountDetailsService)
-                                    .passwordEncoder(passwordEncoder());
-
-        return authenticationManagerBuilder.build();
-    }*/
+    private static final String[] ALLOWED_URLS = {LOGIN, "/auth/registration", "/error", "/", "/contacts",
+                                                  "/js/**", "/css/**", "/img/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -45,6 +30,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .failureUrl("/error")
                         .failureUrl("/auth/login?error")
+
                         .defaultSuccessUrl("/", false)
                 )
                 .logout(logout -> logout
