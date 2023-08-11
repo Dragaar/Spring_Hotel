@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Main</title>
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> Hotel app </title>
 </head>
 <body>
 
-<div th:replace="~{fragments/menu :: menu}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
 <div>Welcome to Hotel App! </div>
 
