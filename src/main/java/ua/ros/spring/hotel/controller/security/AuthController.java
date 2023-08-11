@@ -11,6 +11,8 @@ import ua.ros.spring.hotel.controller.dto.account.AccountRegistrationDTO;
 import ua.ros.spring.hotel.model.entity.Account;
 import ua.ros.spring.hotel.model.service.impl.account.RegistrationService;
 
+import static ua.ros.spring.hotel.controller.constant.ControllerConstant.*;
+
 @Slf4j
 @Controller
 @RequestMapping("/auth")
@@ -31,12 +33,12 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginPage() {
-        return "auth/login";
+        return LOGIN_HTML;
     }
 
     @GetMapping("/registration")
     public String registrationPage(@ModelAttribute("account") AccountRegistrationDTO account) {
-        return "auth/registration";
+        return REGISTRATION_HTML;
     }
 
     @PostMapping("/registration")
@@ -44,7 +46,7 @@ public class AuthController {
                                BindingResult bindingResult) {
         //accountRegistrationDTOValidator.validate(person, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "auth/registration";
+            return REGISTRATION_HTML;
         }
         registrationService.register(modelMapper.map(account, Account.class));
         log.info(String.format("%s registered", account.getEmail()));
