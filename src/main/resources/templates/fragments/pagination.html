@@ -1,0 +1,58 @@
+<div th:fragment = 'pagination'>
+    <div th:if="${page.totalPages > 0}" class="mt-4 d-flex justify-content-center">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+
+               <!-- For displaying Previous link except for the 1st page-->
+
+                <li th:if="${page.hasPrevious()}" class="page-item" >
+                    <a class="page-link" th:href="@{''(page=${page.number}-1, size=${page.size}, searchValue=${searchValue})}" th:text="#{pagination.previous}"></a>
+                </li>
+                <li th:unless="${page.hasPrevious()}" class="page-item disabled">
+                    <a class="page-link" th:text="#{pagination.previous}"></a>
+                </li>
+
+                <!--For displaying Page numbers.
+                The when condition does not display a link for the current page-->
+
+                <div th:if="${page.number > 3}"
+                     th:each="i: ${#numbers.sequence(page.number-3, page.number+3)}"
+                    >
+
+                    <div th:if="${i < page.totalPages}">
+                        <li th:if="${i == page.number}" class="page-item active">
+                            <a class="page-link" th:text="${i+1}"></a>
+                        </li>
+                        <li th:unless="${i == page.number}"class="page-item">
+                            <a class="page-link" th:href="@{''(page=${i}, size=${page.size}, searchValue=${searchValue})}" th:text="${i+1}"></a>
+                        </li>
+                    </div>
+
+                </div>
+
+                <div th:unless="${page.number > 3}"
+                     th:each="i: ${#numbers.sequence(0, 6)}">
+
+                     <div th:if="${i < page.totalPages}">
+                        <li th:if="${i == page.number}" class="page-item active">
+                            <a class="page-link" th:text="${i+1}"></a>
+                        </li>
+                        <li th:unless="${i == page.number}"class="page-item">
+                            <a class="page-link" th:href="@{''(page=${i}, size=${page.size}, searchValue=${searchValue})}" th:text="${i+1}"></a>
+                        </li>
+                     </div>
+
+                </div>
+               <!-- For displaying Next link-->
+
+                <li th:if="${page.hasNext()}" class="page-item">
+                    <a class="page-link" th:href="@{''(page=${page.number}+1), size=${page.size}, searchValue=${searchValue}}" th:text="#{pagination.next}"></a>
+                </li>
+                <li th:unless="${page.hasNext()}" class="page-item disabled">
+                    <a class="page-link" th:text="#{pagination.next}"></a>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+</div>
