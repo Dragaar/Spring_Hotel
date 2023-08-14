@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> Apartment </title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <!--  <c:if test="${empty requestScope.apartment}">
+          <br><fmt:message key="apartment.error.cannotFind" /></br>
+      </c:if>-->
+    <!--/*@thymesVar id="apartment" type="ua.ros.spring.hotel.model.entity.Apartment"*/-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <img class="w-100" th:src="@{${'/img/apartments/' + apartment.imageURL +'/1.jpg'}}">
+            </div>
+            <div class="col-md-8 text-left">
+                <div class="row">
+                    <h2 class="col-md-10" th:text="${apartment.title}"></h2>
+                    <h6 class="col-md-2 text-muted d-flex flex-row-reverse align-items-center"
+                        th:text="${apartment.apartmentClass}">
+                    </h6>
+                </div>
+
+                <h6 class="mb-2 text-muted" th:text="${apartment.address}"></h6>
+                <p th:text="${apartment.description}"></p>
+
+                <div class="row">
+                    <h6 class="col-md-4 text-left" th:text="#{apartment.price}"></h6>
+                    <h6 class="col-md-2 text-muted" th:text="${apartment.price}+'&#8372'"></h6>
+                </div>
+
+                <div class="row">
+                    <h6 class="col-md-4 text-left" th:text="#{apartment.roomsCount}"></h6>
+                    <h6 class="col-md-2 text-muted" th:text="${apartment.roomsNumber}"></h6>
+                </div>
+                <div class="row">
+                    <h6 class="col-md-4 text-left" th:text="#{apartment.maxGuestsNumber}"></h6>
+                    <h6 class="col-md-2 text-muted" th:text="${apartment.maxGuestsNumber}"></h6>
+                </div>
+
+                <script id="datepickerScript" th:src="@{/js/bookingDatepickerConfig.js}" th:inline="javascript"
+                        th:data-pickerLang = "${#locale}" th:data-currentDate = "${currentDate}"
+                        th:data-disabledDatesListExist = "${!#strings.isEmpty(disabledDatesList)}"
+                        th:data-disabledDatesList = "${disabledDatesList}">
+                </script>
+
+                <h6 class="text-left" th:text="#{apartment.availableDates}"></h6>
+                <div class="row">
+                    <div class="datepicker"> </div>
+                </div>
+            </div>
+        </div>
+
+        <form th:action="@{/apartments/apartment/newBooking}" th:method="POST">
+
+            <input type="hidden" name="title" th:value="${apartment.title}">
+            <input type="hidden" name="address" th:value="${apartment.address}">
+            <input type="hidden" name="apartmentClass" th:value="${apartment.apartmentClass}">
+            <input type="hidden" name="price" th:value="${apartment.price}">
+            <input type="hidden" name="id" th:value="${apartment.id}">
+
+            <div class="row d-flex flex-row-reverse align-items-center">
+
+                <button th:if="${apartment.state == true}" class="col-md-2 btn btn-primary my-1" type="submit" th:text="#{apartment.makeBooking}"></button>
+                <div  th:unless="${apartment.state == true}">
+                    <button disabled class="col-md-4 btn btn-secondary my-1" th:text="#{apartment.makeBooking}"></button>
+                    <h5 th:text="#{apartment.bookingUnavailable}"></h5>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</html>
