@@ -4,6 +4,7 @@ package ua.ros.spring.hotel.model.service.impl.account;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import ua.ros.spring.hotel.model.service.AccountService;
 import java.util.Optional;
 import com.querydsl.core.types.Predicate;
 
+@Slf4j
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
@@ -35,6 +37,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean createAccount(Account account) {
         if( account.getId() == null ) {
+            log.info("Create new Account");
             entityManager.persist(account);
             return true;
         }
@@ -44,6 +47,7 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly=true)
     @Override
     public Boolean isAccountExist(Account account) {
+        log.info("Check is Account exist");
         Account tempAccount = accountRepository.findById(account.getId()).orElseThrow();
         return tempAccount.equals(account);
     }
@@ -52,6 +56,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @SuppressWarnings("unchecked")
     public Optional<Account> findOne(Predicate predicate) {
+        log.info("Find one Account");
         Object reflectionObject = accountRepository.findOne(predicate);
         return (Optional<Account>) reflectionObject;
     }
@@ -60,6 +65,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @SuppressWarnings("unchecked")
     public Page<Account> findAll(Predicate predicate, Pageable pageable) {
+        log.info("Find all Accounts");
         Object reflectionObject = accountRepository.findAll(predicate, pageable);
         return (Page<Account>) reflectionObject;
     }
@@ -67,6 +73,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean updateAccount(Account account) {
         if(account.getId() != null ) {
+            log.info("Update Account By Id -> " +account.getId());
             entityManager.merge(account);
             return true;
         }
@@ -75,6 +82,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Boolean deleteAccount(Account account) {
+        log.info("Delete Account By Id -> " +account.getId());
         return accountRepository.costumDeleteById(account.getId()) > 0;
     }
 }

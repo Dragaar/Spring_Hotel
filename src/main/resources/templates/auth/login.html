@@ -1,28 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> Login Page </title>
 </head>
+
 <body>
 
-<div th:replace="~{fragments/menu :: menu}"></div>
+<section class="vh-100">
 
-<form method="post" action="/process_login">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6 text-black">
 
-    <label for="email">Enter email: </label>
-    <input type="email" name="email" id="email"/>
-    <br/>
-    <label for="password">Enter password: </label>
-    <input type="password" name="password" id="password"/>
-    <br/>
-    <input type="submit" value="Login"/>
+                <div class="row" >
+                    <img class="col-ml-6 offset-md-3" style="max-height: 180px; max-width: 180px;" src="/img/site-logo.png" >
+                </div>
 
-    <div th:if="${param.error}" style="color: red">Wrong email or password</div>
-</form>
+                <div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 pt-xl-0 mt-xl-n7">
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+                    <form action="/process_login" method="post" style="width: 23rem;">
+
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;" th:text="#{login.loginIn}"></h3>
+
+                        <div class="form-outline mb-4">
+                            <input name="email" type="email" id="form2Example18" class="form-control form-control-lg" />
+                            <label class="form-label" for="form2Example18" th:text="#{login.email}"></label>
+                        </div>
+
+                        <div class="form-outline mb-2">
+                            <input name="password" type="password" id="form2Example28" class="form-control form-control-lg" />
+                            <label class="form-label" for="form2Example28" th:text="#{login.password}"></label>
+                        </div>
+
+                        <div class="pt-1 mb-2" ><text th:if="${param.error}" style="color: red">Wrong email or password</text></div>
+
+                        <div class="pt-1 mb-4">
+                            <button type="submit" name="Login" value="Login" title="Login" class="col-12 btn btn-primary btn-lg btn-block" th:text="#{login.loginIn}"></button>
+                        </div>
+
+                        <p class="small mb-2 pb-lg-2"><a class="text-muted" href="/" th:text="#{login.forgotPassword}"></a></p>
+                        <p><text th:text="#{login.dontHaveAccount}"></text>  <a href="/auth/registration" class="link-info" th:text="#{login.register}"></a></p>
+
+                    </form>
+
+                </div>
+
+            </div>
+            <div class="col-sm-6 px-0 d-none d-sm-block">
+                <img src="/img/fon-1.jpg"
+                     alt="Sign up image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+            </div>
+        </div>
+    </div>
+</section>
 
 </body>
 </html>
