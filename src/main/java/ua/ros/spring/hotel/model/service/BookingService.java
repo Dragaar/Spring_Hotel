@@ -1,11 +1,14 @@
 package ua.ros.spring.hotel.model.service;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ua.ros.spring.hotel.model.entity.Booking;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
+import com.querydsl.core.types.Predicate;
 
 /**
  * Booking Service interface.
@@ -22,12 +25,19 @@ public interface BookingService {
     Boolean                  createBooking(Booking booking);
 
     /**
-     * Find few bookings using second query part conditions and by fields for them
-     * @param secondQueryPart QueryBuilder result string
-     * @param fields fields to insert in second query part statement
-     * @return found bookings
+     * Find booking by predicate
+     * @param p conditions to receive booking
+     * @return found booking
      */
-    ArrayList<Booking>       findFewBookingAndSort(String secondQueryPart, Object... fields);
+    Optional<Booking>        findOne(Predicate p);
+
+    /**
+     * Find bookings by predicate
+     * @param p conditions to receive bookings
+     * @param pageable conditions to perform paginating
+     * @return page with bookings
+     */
+    Page<Booking>            findAll(Predicate p, Pageable pageable);
 
     /**
      * Update booking
@@ -48,6 +58,6 @@ public interface BookingService {
      * @param apartmentIdOfBookingDates related apartment id
      * @return HashMap with check-in-date as key and check-out-date as value
      */
-    HashMap<Date, Date>      getBookingsDatesFromDB(Long apartmentIdOfBookingDates);
+    HashMap<Date, Date> findAllBookingsDatesRelatedToApartment(Long apartmentIdOfBookingDates);
 
 }

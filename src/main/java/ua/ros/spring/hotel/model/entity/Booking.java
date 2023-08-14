@@ -34,6 +34,7 @@ public class Booking implements Serializable {
     private Date checkOutDate;
 
     //Auto-Generated
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "reservation_data")
     private Timestamp reservationData;
 

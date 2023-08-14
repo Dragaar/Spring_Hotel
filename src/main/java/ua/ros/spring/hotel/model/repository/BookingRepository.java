@@ -1,15 +1,17 @@
 package ua.ros.spring.hotel.model.repository;
 
 
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
-import ua.ros.spring.hotel.model.entity.Apartment;
-import ua.ros.spring.hotel.model.entity.Booking;
 
-import java.sql.Connection;
+import org.springframework.stereotype.Repository;
+import ua.ros.spring.hotel.model.entity.Booking;
+import ua.ros.spring.hotel.model.entity.QBooking;
+
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -18,12 +20,13 @@ import java.util.Optional;
  *
  * @author Rostyslav Ivanyshyn.
  */
-public interface BookingRepository extends JpaRepository<Booking, Long> {
+@Repository
+public interface BookingRepository extends JpaRepository<Booking, Long>, QuerydslPredicateExecutor<QBooking> {
 
     @Query("SELECT b FROM Booking b " +
             "WHERE b.apartment.id = ?1 " +
-            "AND b.checkInDate >= CURRENT_DATE " +
-            "AND b.checkOutDate >= CURRENT_DATE")
+            "AND (b.checkInDate >= CURRENT_DATE " +
+            "OR b.checkOutDate >= CURRENT_DATE)")
     Optional<ArrayList<Booking>> findAllBookingsRelatedToApartment(Long apartmentId);
     /** Create DB event:
      * <br> After the specified period of time,
@@ -43,5 +46,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                   @Param("db_name") String databaseName,
                                   @Param("id_value")  Long id);
 
-
+    @Modifying(flushAutomatically = true)
+    @Query(value = "DELETE FROM booking WHERE id = ?1", nativeQuery = true)
+    int customDeleteById(Long id);
 }
