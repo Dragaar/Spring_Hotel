@@ -1,37 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-	<meta charset="UTF-8">
-	<title>Registration</title>
+<head th:replace="~{fragments/head :: head}">
+	<title id="pageTitle"> Registration </title>
 </head>
 <body>
 
-<div th:replace="~{fragments/menu :: menu}"></div>
+<section class="vh-100">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-6 text-black">
 
-<form th:method="POST" th:action="@{/auth/registration}" th:object="${account}">
-	<label for="username">Enter email: </label>
-	<input type="email" th:field="*{email}" id="username"/>
-	<div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email Error</div>
-	<br/>
-	<label for="password">Enter password: </label>
-	<input type="password" th:field="*{password}" id="password"/>
-	<div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
-	<br/>
-	<label for="confirm_password">Confirm password: </label>
-	<input type="password" th:field="*{confirmPassword}" id="confirm_password"/>
-	<br/>
-	<label for="name">Enter name: </label>
-	<input th:field="*{firstName}" id="name"/>
-	<div style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</div>
-	<br/>
-	<label for="surname">Enter surname: </label>
-	<input th:field="*{lastName}" id="surname"/>
-	<div style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Surname Error</div>
-	<br/>
-	<input type="submit" value="Sign up!"/>
-</form>
+				<div class="row" >
+					<img class="col-ml-6 offset-md-3" style="max-height: 180px; max-width: 180px;" src="/img/site-logo.png" >
+				</div>
 
-<div th:replace="~{fragments/footer :: footer}"></div>
+				<div class="d-flex align-items-center h-custom-2 px-5 ms-xl-4 pt-xl-0 mt-xl-n7">
+
+					<form th:method="post" th:action="@{/auth/registration}" th:object="${account}" style="width: 23rem;">
+
+						<h3 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;" th:text="#{registration.singUpNow}"></h3>
+
+						<!-- 2 column grid layout with text inputs for the first and last names -->
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-outline">
+									<input name="firstName" type="text" id="form1" class="form-control" th:field="*{firstName}" />
+									<label class="form-label" th:text="#{registration.firstName}"></label>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-outline">
+									<input name="lastName" type="text" id="form2" class="form-control" th:field="*{lastName}"/>
+									<label class="form-label" th:text="#{registration.lastName}"></label>
+								</div>
+							</div>
+						</div>
+						<div class="mb-4">
+							<label class="form-label" style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">Name Error</label>
+							<label class="form-label" style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Surname Error</label>
+						</div>
+						<!-- Email input -->
+						<div class="form-outline mb-4">
+							<input name="email" type="email" id="form3" class="form-control" th:field="*{email}"/>
+							<label class="form-label"  th:text="#{registration.email}"></label>
+							<div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email Error</div>
+						</div>
+
+
+						<!-- Password input -->
+						<div class="form-outline mb-2">
+							<input name="password" type="password" id="form4" class="form-control" th:field="*{password}"  />
+							<label class="form-label" th:text="#{registration.password}"></label>
+						</div>
+						<div class="form-outline mb-2">
+							<input name="password" type="password" id="form5" class="form-control" th:field="*{confirmPassword}"  />
+							<label class="form-label" th:text="#{registration.confirmPassword}"></label>
+							<div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+						</div>
+
+						<div class="pt-1 mb-2">
+							<button class="col-12 btn btn-primary btn-lg btn-block" type="submit" th:text="#{registration.signUp}"></button>
+						</div>
+
+						<p><text th:text="#{registration.haveAccount}"></text>  <a href="/auth/login" class="link-info" th:text="#{registration.loginIn}"></a></p>
+
+					</form>
+
+				</div>
+
+			</div>
+			<div class="col-sm-6 px-0 d-none d-sm-block">
+				<img src="/img/fon-1.jpg"
+					 alt="Sign up image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+			</div>
+		</div>
+	</div>
+</section>
 
 </body>
 </html>
