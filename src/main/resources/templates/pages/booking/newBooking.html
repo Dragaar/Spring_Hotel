@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> New Booking </title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-left">
+                <!--/*@thymesVar id="apartment" type="ua.ros.spring.hotel.controller.dto.apartment.ApartmentDTO"*/-->
+                <div class="row">
+                    <h6 class="col-md-3 text-left" th:text="#{booking.bookingIn}"></h6>
+                    <h6 class="col-md-3 d-flex flex-row-reverse align-items-center" th:text="${apartment.title}">
+                    </h6>
+                </div>
+
+                <h6 class="col-md-6 mt-2 text-muted d-flex flex-row-reverse align-items-center" th:text="${apartment.address}">
+                </h6>
+
+                <div class="row mt-2">
+                    <h6 class="col-md-2 text-left" th:text="#{booking.apartmentType}"></h6>
+                    <h6 class="col-md-4 text-muted d-flex flex-row-reverse align-items-center" th:text="${apartment.apartmentClass}">
+                    </h6>
+                </div>
+
+                <div class="row mt-2">
+                    <h6 class="col-md-4 text-left" th:text="#{booking.price.details}"></h6>
+                    <h6 class="col-md-2 text-muted d-flex flex-row-reverse align-items-center" th:text="${apartment.price} +'&#8372'">
+                    </h6>
+                </div>
+
+                <form th:action="@{/createBooking}" method="post" style="width: 23rem;">
+
+                    <h4 class="fw-normal mt-2 mb-3 pb-3" style="letter-spacing: 1px;" th:text="#{booking.details}"></h4>
+
+                    <div class="form-outline mb-4">
+                        <input name="guestsNumber" type="number" id="form1" class="form-control form-control-lg" />
+                        <label class="form-label" for="form1" th:text="#{booking.guestsNumber}"></label>
+                    </div>
+
+                    <script id="datepickerScript" th:src="@{/js/bookingDatepickerDaterangeConfig.js}" th:inline="javascript"
+                            th:data-pickerLang = "${#locale}" th:data-currentDate = "${currentDate}"
+                            th:data-disabledDatesListExist = "${!#strings.isEmpty(disabledDatesList)}"
+                            th:data-disabledDatesList = "${disabledDatesList}">
+                    </script>
+
+                    <div class="form-outline mb-4">
+
+                        <div class="input-group input-daterange">
+                            <input name="checkInDate" type='text' class="input-sm form-control" id='form2'>
+                            <span class="input-group-text">to</span>
+                            <input name="checkOutDate" type='text' class="input-sm form-control" id='form3'>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-6 form-label" for="form2" th:text="#{booking.checkInDate}"></label>
+                            <label class="col-md-6 form-label" for="form3" th:text="#{booking.checkOutDate}"></label>
+                        </div>
+
+                    </div>
+
+                    <div class="pt-1 mb-4">
+                        <input type="hidden" name="apartmentId" th:value="${apartment.id}">
+                        <button type="submit" name="Book" class="col-12 btn btn-primary btn-lg btn-block" th:text="#{booking.makeABooking}"></button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</html>
