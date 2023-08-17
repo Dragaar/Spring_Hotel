@@ -97,6 +97,39 @@ public class ApartmentController {
         return disabledDatesMap;
     }
 
+    @PostMapping("/apartment/newBooking")
+    public String newBookingPage(Model model, HttpSession session,
+                                      @ModelAttribute("apartment") ApartmentDTO apartmentDTO
+    ) {
+        log.info("GET New Booking page. By Apartment Id " + apartmentDTO.getId());
+        model.addAttribute("apartment", apartmentDTO);
+        model.addAttribute("currentDate", LocalDate.now());
+
+
+        HashMap<Date, Date> disabledDatesMap = getDisabledDatesOfRelatedApartmentFromSession(session, apartmentDTO.getId());
+        ArrayList<LocalDate> disabledDatesList = dateUtil.convertDatesRangeToList(disabledDatesMap);
+        log.info("Disabled for booking Data`s list -> " + disabledDatesList);
+        model.addAttribute("disabledDatesList", disabledDatesList);
+
+        return NEW_BOOKING_HTML;
+    }
+
+    private HashMap<Date, Date> getDisabledDatesOfRelatedApartmentFromSession(HttpSession session, Long requestedApartmentId) {
+        final Long apartmentIdOfDisabledDates = (Long) session.getAttribute("apartmentIdOfBookingDates");
+
+        @SuppressWarnings("unchecked")
+        HashMap<Date, Date> disabledDatesMap = (HashMap<Date, Date>) session.getAttribute("disabledDatesMap");
+
+        if(apartmentIdOfDisabledDates == null
+                || disabledDatesMap == null
+                || !apartmentIdOfDisabledDates.equals(requestedApartmentId))
+        {
+            log.info("Session data not found. Perform requests to BD");
+            disabledDatesMap = bookingService.findAllBookingsDatesRelatedToApartment(requestedApartmentId);
+        }
+        return disabledDatesMap;
+    }
+
     private boolean isBlank(String value) {
         return value == null || value.isEmpty();
     }
