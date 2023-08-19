@@ -73,5 +73,5 @@ public interface ApartmentRepository extends JpaRepository<Apartment, Long>, Que
 
     @Modifying(flushAutomatically = true)
     @Query(value = "DELETE FROM apartment WHERE id = ?1", nativeQuery = true)
-    int costumDeleteById(Long id);
+    int customDeleteById(Long id);
 }

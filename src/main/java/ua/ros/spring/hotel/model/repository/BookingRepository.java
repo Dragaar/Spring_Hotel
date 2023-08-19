@@ -15,6 +15,8 @@ import ua.ros.spring.hotel.model.entity.QBooking;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static ua.ros.spring.hotel.model.constant.Query.DB_NAME_AND_BOOKING_TABLE_NAME;
+
 /**
  * Booking DAO interface.
  *
@@ -28,23 +30,18 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             "AND (b.checkInDate >= CURRENT_DATE " +
             "OR b.checkOutDate >= CURRENT_DATE)")
     Optional<ArrayList<Booking>> findAllBookingsRelatedToApartment(Long apartmentId);
-    /** Create DB event:
-     * <br> After the specified period of time,
-     * <br> If bill for booking isn`t paid -> delete booking
-     *
-     * @param id id of the booking being checked
-     * @return Boolean operation result
-     */
-    @Modifying
-    @Query(value="CREATE EVENT :name " +
-            "ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE " +
+
+    //NOT SUPPORTED WITH HIBERNATE
+   /* @Modifying
+    @Query(value="CREATE EVENT :event_name " +
+            "ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL :days_time_interval  MINUTE " +
             "DO " +
-            "DELETE FROM :db_name.`booking` " +
-            "WHERE id = :id_value AND is_paid_for_reservation = 0",
+            "DELETE FROM " + DB_NAME_AND_BOOKING_TABLE_NAME +
+            "WHERE id = :id_value AND is_paid_for_reservation = 0 ",
             nativeQuery=true)
-    Boolean createEventIsBillPaid(@Param("name") String eventName,
-                                  @Param("db_name") String databaseName,
-                                  @Param("id_value")  Long id);
+    int createEventIsBillPaid(@Param("event_name") String eventName,
+                              @Param("days_time_interval") String daysTimeInterval,
+                              @Param("id_value")  Long id);*/
 
     @Modifying(flushAutomatically = true)
     @Query(value = "DELETE FROM booking WHERE id = ?1", nativeQuery = true)

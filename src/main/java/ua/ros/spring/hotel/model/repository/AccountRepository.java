@@ -23,6 +23,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, Queryds
     Optional<Account> findByEmail(String email);
     @Modifying(flushAutomatically = true)
     @Query(value = "DELETE FROM account WHERE id = ?1", nativeQuery = true)
-    int costumDeleteById(Long id);
+    int customDeleteById(Long id);
 
 }

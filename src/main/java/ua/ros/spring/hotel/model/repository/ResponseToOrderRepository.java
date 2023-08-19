@@ -2,12 +2,13 @@ package ua.ros.spring.hotel.model.repository;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import ua.ros.spring.hotel.model.entity.Apartment;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.stereotype.Repository;
+import ua.ros.spring.hotel.model.entity.QResponseToOrder;
 import ua.ros.spring.hotel.model.entity.ResponseToOrder;
 
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -16,7 +17,8 @@ import java.util.Optional;
  *
  * @author Rostyslav Ivanyshyn.
  */
-public interface ResponseToOrderRepository extends JpaRepository<ResponseToOrder, Long> {
+@Repository
+public interface ResponseToOrderRepository extends JpaRepository<ResponseToOrder, Long>, QuerydslPredicateExecutor<QResponseToOrder> {
 
     @Query("SELECT ResponseToOrder FROM ResponseToOrder WHERE ?1 LIKE ?2")
     Optional<ResponseToOrder> findByField(String field, Object value);
@@ -34,11 +36,14 @@ public interface ResponseToOrderRepository extends JpaRepository<ResponseToOrder
 
     /** Get all attached to response-to-order(RTO) apartments by RTO id.
      *
-     * @param con connection to database
      * @param id response to order id
      * @return ArrayList of attached apartments
      */
     //ArrayList<Apartment> getResponseApartments(Connection con, Long id);
+
+    @Modifying(flushAutomatically = true)
+    @Query(value = "DELETE FROM response_to_order WHERE id = ?1", nativeQuery = true)
+    int customDeleteById(Long id);
 
     /** Delete all attached to response-to-order(RTO) apartments by RTO id.
      *  <br> Delete only references to apartments
@@ -47,5 +52,6 @@ public interface ResponseToOrderRepository extends JpaRepository<ResponseToOrder
      * @return Boolean operation result
      */
     //boolean deleteResponseApartments(Connection con, Long id);
+
 
 }
