@@ -43,12 +43,15 @@ public class Order implements Serializable {
     //Foreign keys
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "fk_order_account1"))
     private Account account;
 
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "response_to_order_id")
+    @JoinColumn(name = "response_to_order_id",
+                foreignKey = @ForeignKey(name = "fk_order_response_to_order1"))
     private ResponseToOrder responseToOrder = null;
 
     @Override

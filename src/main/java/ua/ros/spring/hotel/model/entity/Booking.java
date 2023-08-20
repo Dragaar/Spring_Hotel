@@ -2,6 +2,9 @@ package ua.ros.spring.hotel.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.GenerationTime;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -35,6 +38,7 @@ public class Booking implements Serializable {
 
     //Auto-Generated
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @Column(name = "reservation_data")
     private Timestamp reservationData;
 
@@ -43,11 +47,15 @@ public class Booking implements Serializable {
 
     //Foreign keys
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "account_id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "fk_booking_account1"))
     private Account account;
 
     @ManyToOne
-    @JoinColumn(name = "apartment_id")
+    @JoinColumn(name = "apartment_id",
+                nullable = false,
+                foreignKey = @ForeignKey(name = "fk_booking_apartment"))
     private Apartment apartment;
 
     @Override
