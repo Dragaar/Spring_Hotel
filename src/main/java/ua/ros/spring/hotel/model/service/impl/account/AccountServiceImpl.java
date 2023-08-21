@@ -83,6 +83,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean deleteAccount(Account account) {
         log.info("Delete Account By Id -> " +account.getId());
-        return accountRepository.costumDeleteById(account.getId()) > 0;
+        return accountRepository.customDeleteById(account.getId()) > 0;
     }
 }

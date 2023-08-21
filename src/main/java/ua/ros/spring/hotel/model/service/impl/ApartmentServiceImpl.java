@@ -82,6 +82,6 @@ public class ApartmentServiceImpl implements ApartmentService {
     @Override
     public Boolean deleteApartment(Apartment apartment) {
         log.info("Delete Apartment By Id -> " +apartment.getId());
-        return apartmentRepository.costumDeleteById(apartment.getId()) > 0;
+        return apartmentRepository.customDeleteById(apartment.getId()) > 0;
     }
 }

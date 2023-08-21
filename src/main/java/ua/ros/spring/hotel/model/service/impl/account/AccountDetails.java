@@ -3,7 +3,6 @@ package ua.ros.spring.hotel.model.service.impl.account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ua.ros.spring.hotel.model.entity.Account;
-import ua.ros.spring.hotel.model.entity.AccountRole;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,7 +13,9 @@ public record AccountDetails(Account account) implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(account.getRole());
     }
-
+    public Long getId() {
+        return account.getId();
+    }
     @Override
     public String getPassword() {
         return account.getPassword();
