@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.ros.spring.hotel.controller.dto.apartment.ApartmentDTO;
 import ua.ros.spring.hotel.model.entity.Apartment;
+import ua.ros.spring.hotel.model.entity.QApartment;
 import ua.ros.spring.hotel.model.service.ApartmentService;
 import ua.ros.spring.hotel.model.service.BookingService;
 import ua.ros.spring.hotel.utils.DateUtil;
@@ -70,11 +71,12 @@ public class ApartmentController {
 
     @GetMapping("/getApartmentDetails")
     public String singleApartmentPage(Model model, HttpSession session,
-                                      @QuerydslPredicate(root = Apartment.class) Predicate predicate,
                                       @RequestParam(name = "apartmentId") @NonNull Long apartmentId
     ) {
         log.info("GET Single Apartment. By Id " + apartmentId);
-        Apartment apartment = apartmentService.findOne(predicate).orElseThrow();
+        Apartment apartment = apartmentService.findOne(
+                QApartment.apartment.id.eq(apartmentId)
+        ).orElseThrow();
 
         model.addAttribute("apartment", apartment);
         model.addAttribute("currentDate", LocalDate.now());
