@@ -17,8 +17,8 @@ public class ControllerConstant {
     public static final String PROFILE_DIR= "/pages/profile";
 
     //---------------- Html pages -------------------\\
-    public static final String INDEX_HTML = "common/index.html";
-    public static final String ERROR_HTML = "common/error.html";
+    public static final String INDEX_HTML = "/common/index.html";
+    public static final String ERROR_HTML = "/common/error.html";
 
     public static final String LOGIN_HTML = AUTHENTICATION_DIR+"/login.html";
     public static final String REGISTRATION_HTML= AUTHENTICATION_DIR+"/registration.html";
