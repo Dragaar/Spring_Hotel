@@ -15,8 +15,6 @@ import ua.ros.spring.hotel.model.entity.QBooking;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static ua.ros.spring.hotel.model.constant.Query.DB_NAME_AND_BOOKING_TABLE_NAME;
-
 /**
  * Booking DAO interface.
  *

@@ -2,6 +2,7 @@ package ua.ros.spring.hotel.model.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.*;
+import ua.ros.spring.hotel.exeption.exceptions.BindingErrorsException;
 import ua.ros.spring.hotel.model.entity.Booking;
 import ua.ros.spring.hotel.model.repository.BookingRepository;
 import ua.ros.spring.hotel.model.service.BookingService;
@@ -18,6 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import com.querydsl.core.types.Predicate;
+import ua.ros.spring.hotel.utils.validation.booking.BookingCreationValidator;
+
+import static ua.ros.spring.hotel.exeption.exceptions.Message.BOOKING_CREATE_ERROR;
 
 @Slf4j
 @Service
@@ -27,34 +33,60 @@ public class BookingServiceImpl implements BookingService {
     @PersistenceContext
     private EntityManager entityManager;
     private final BookingRepository bookingRepository;
-
-    public BookingServiceImpl(BookingRepository bookingRepository) {
-        this.bookingRepository = bookingRepository;
-    }
+    private final BookingCreationValidator bookingCreationValidator;
 
     @Value("${database.name}")
     private String databaseName;
+    @Value("${database.booking.daysToPayBillBeforeDeleteBooking}")
+    private String timeToPayBill;
+
+    public BookingServiceImpl(BookingRepository bookingRepository, BookingCreationValidator bookingCreationValidator) {
+        this.bookingRepository = bookingRepository;
+        this.bookingCreationValidator = bookingCreationValidator;
+    }
 
     @Override
     public Boolean createBooking(Booking booking) {
-        
-        //get related apartment
-        @NonNull Long relatedApartmentId = booking.getApartment().getId();
 
-        //get all existed bookings dates (check-in/check-out) related to apartment
-        @NonNull HashMap<Date, Date> bookingsDates
-            = findAllBookingsDatesRelatedToApartment(relatedApartmentId);
+        BindingResult errors = new BeanPropertyBindingResult(booking, "booking");
+        bookingCreationValidator.validate(booking, errors);
+        if (errors.hasErrors()){
+            log.error("Cannot create Booking", errors);
+            throw new BindingErrorsException(BOOKING_CREATE_ERROR, errors);
+        }
 
-        //validation.validateBooking(booking, bookingsDates);
         log.info("Create new Booking");
         entityManager.persist(booking);
+        entityManager.flush();
 
-        String eventName = "IsBill_"+booking.getId()+ "_Paid";
-        return bookingRepository.createEventIsBillPaid(eventName, databaseName, booking.getId());
+        return createEventToCheckBillPaid(booking);
+    }
 
-        /*if     (bookingDAO.insert(connection, booking))
-        return bookingDAO.createEventIsBillPaid(connection, booking.getId());
-        else return false;*/
+    private boolean createEventToCheckBillPaid(Booking booking) {
+        log.info("Create event to check paid for booking");
+        String eventName = " IsBill_"+ booking.getId()+ "_Paid ";
+
+        String createEvent = "CREATE EVENT " + eventName +
+                "ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL :days_time_interval DAY " + //MINUTE
+                "DO " +
+                "DELETE FROM `" + databaseName + "`.`booking`" +
+                "WHERE id = :id_value AND is_paid_for_reservation = 0 ";
+
+        Query query = entityManager.createNativeQuery(createEvent)
+                .setParameter("days_time_interval", timeToPayBill)
+                // escaping attempt ("'"+timeToPayBill+"'") dosn`t throw any exception,
+                // but also doesn`t allow to create event
+                .setParameter("id_value", booking.getId());
+
+        //receive operation result from DB by hibernate NOT SUPPORTED
+        query.executeUpdate();
+        return true;
+
+        //Declarative management with DDL in hibernate NOT SUPPORTED
+        //String eventName = "IsBill_"+booking.getId()+ "_Paid";
+        /*return bookingRepository.createEventIsBillPaid(eventName,
+                                                       timeToPayBill,
+                                                       booking.getId() ) > 0;*/
     }
 
     @Transactional(readOnly=true)
