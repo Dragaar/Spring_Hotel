@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,6 +22,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                        .maximumSessions(1)
+                        //.maxSessionsPreventsLogin(true)
+                )
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(ALLOWED_URLS).permitAll()
                         .anyRequest().authenticated())
@@ -36,6 +42,8 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl(LOGIN)
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 );
 
