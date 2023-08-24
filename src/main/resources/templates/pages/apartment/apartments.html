@@ -23,7 +23,6 @@
                         <a th:if="${#authorization.expression('hasRole(''ROLE_MANAGER'')')}" href="/apartments/apartment/edit" th:text="#{apartment.edit}"></a>
 
                         <form action="/apartments/getApartmentDetails" method="GET" class="float-end">
-                            <input type="hidden" name="id" th:value="${apartment.id}">
                             <input type="hidden" name="apartmentId" th:value="${apartment.id}">
                             <button class="btn btn-primary my-1" type="submit" th:text="#{apartment.details}"></button>
                         </form>
