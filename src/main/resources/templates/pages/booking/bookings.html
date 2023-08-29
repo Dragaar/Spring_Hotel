@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+  <title id="pageTitle"> Bookings </title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+
+ <!-- <div class="px-5 ms-xl-4 d-flex d-flex justify-content-center">
+    <tags:showMessage messageKey="${param.message}"/>
+  </div>-->
+  <div th:if="${page.content == null}">
+    <h2 class="d-flex justify-content-center" th:text="#{booking.error.cannotFind}"></h2>
+    <div class="d-flex justify-content-center">
+      <img th:src="@{/img/icons/sad-cat.jpg}" class="img">
+    </div>
+  </div>
+
+
+  <div th:if="${page.content != null}">
+
+    <h2 class="col-lg-8" th:text="#{booking.list}"></h2>
+
+    <div class="container">
+      <div class="row">
+
+        <script th:src="@{/js/rowNumeration.js}"></script>
+
+        <table class="table table-bordered table-responsive">
+          <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col" th:text="#{booking.status}"></th>
+            <th scope="col" th:text="#{booking.makePaymentForBooking}"></th>
+            <th scope="col" th:text="#{booking.apartment}"></th>
+            <th scope="col" th:text="#{booking.guestsNumber}"></th>
+            <th scope="col" th:text="#{booking.checkInDate}"></th>
+            <th scope="col" th:text="#{booking.checkOutDate}"></th>
+            <th scope="col" th:text="#{booking.dateOfCreation}"></th>
+            <th scope="col" th:text="#{booking.actions}"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <!--/*@thymesVar id="booking" type="ua.ros.spring.hotel.model.entity.Booking"*/-->
+          <div th:each="booking : ${page.content}" class="col">
+
+            <tr class="numeric">
+              <td></td>
+
+                <div th:if="${booking.isPaidForReservation == true}">
+                  <td class="table-success" th:text="#{booking.paid}"></td>
+                </div>
+                <div th:unless="${booking.isPaidForReservation == true}">
+                  <td class="table-warning" th:text="#{booking.notPaid}"></td>
+                </div>
+
+              <td>
+                <div th:if="${booking.getIsPaidForReservation() == false}">
+                  <form id="paymentForm" th:action="@{/bookings/makePaymentForBooking}" method="POST">
+                    <input type="hidden" name="bookingId" th:value="${booking.id}">
+                    <button type="submit" class="btn btn-info"><i class="bi bi-currency-dollar"></i></button>
+                  </form>
+                </div>
+              </td>
+              <td>
+                <form id="apartmentForm" th:action="@{/apartments/getApartmentDetails}" method="GET">
+                  <input type="hidden" name="apartmentId" th:value="${booking.apartment.id}">
+                  <button type="submit" class="btn btn-primary"><i class="bi bi-info-circle"></i></button>
+                </form>
+              </td>
+              <td th:text="${booking.guestsNumber}"></td>
+              <td th:text="${booking.checkInDate}"></td>
+              <td th:text="${booking.checkOutDate}"></td>
+              <td th:text="${booking.reservationData}"></td>
+
+              <td>
+                <form id="deleteForm" th:action="@{/bookings/deleteBooking}" method="POST">
+                  <input type="hidden" name="bookingId" th:value="${booking.id}">
+                  <button type="submit" class="btn btn-danger"> <i class="bi bi-trash3"></i></button>
+                </form>
+               <!-- <a class="btn btn-danger" th:href="@{'/bookings/deleteBooking?bookingId='+${booking.id}}">
+                  <i class="bi bi-trash3"></i>
+                </a>-->
+              </td>
+            </tr>
+
+          </div>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div th:replace="~{fragments/pagination :: pagination}"></div>
+
+</body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</html>
