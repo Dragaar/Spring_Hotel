@@ -6,6 +6,7 @@ import jakarta.persistence.Query;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.*;
 import ua.ros.spring.hotel.exeption.exceptions.BindingErrorsException;
 import ua.ros.spring.hotel.model.entity.Booking;
+import ua.ros.spring.hotel.model.entity.QBooking;
 import ua.ros.spring.hotel.model.repository.BookingRepository;
 import ua.ros.spring.hotel.model.service.BookingService;
 
@@ -34,15 +36,17 @@ public class BookingServiceImpl implements BookingService {
     private EntityManager entityManager;
     private final BookingRepository bookingRepository;
     private final BookingCreationValidator bookingCreationValidator;
+    private final BookingService bookingService;
 
     @Value("${database.name}")
     private String databaseName;
     @Value("${database.booking.daysToPayBillBeforeDeleteBooking}")
     private String timeToPayBill;
 
-    public BookingServiceImpl(BookingRepository bookingRepository, BookingCreationValidator bookingCreationValidator) {
+    public BookingServiceImpl(BookingRepository bookingRepository, BookingCreationValidator bookingCreationValidator, @Lazy BookingService bookingService) {
         this.bookingRepository = bookingRepository;
         this.bookingCreationValidator = bookingCreationValidator;
+        this.bookingService = bookingService;
     }
 
     @Override
@@ -100,9 +104,14 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @SuppressWarnings("unchecked")
     public Page<Booking> findAll(Predicate predicate, Pageable pageable) {
-        log.info("Find all Bookings");
+        log.info("Find all Bookings by predicate");
         Object reflectionObject = bookingRepository.findAll(predicate, pageable);
         return (Page<Booking>) reflectionObject;
+    }
+    @Override
+    public Page<Booking> findAll(Pageable pageable) {
+        log.info("Find all Bookings");
+        return  bookingRepository.findAll(pageable);
     }
     @Override
     public Boolean updateBooking(Booking booking) {
@@ -115,9 +124,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Boolean deleteBooking(Booking booking) {
-        log.info("Delete Booking By Id -> " +booking.getId());
-        return bookingRepository.customDeleteById(booking.getId()) > 0;
+    public Boolean deleteBooking(Long bookingId) {
+        log.info("Delete Booking By Id -> " +bookingId);
+        return bookingRepository.customDeleteById(bookingId) > 0;
+    }
+
+    @Override
+    public Boolean makePaymentForBooking(Long bookingId) {
+        log.info("Make payment for booking by id -> " +bookingId);
+        Booking booking = bookingService.findOne(
+                QBooking.booking.id.eq(bookingId)
+        ).orElseThrow();
+        booking.setIsPaidForReservation(true);
+        bookingService.updateBooking(booking);
+        return true;
     }
 
     @Transactional(readOnly=true)

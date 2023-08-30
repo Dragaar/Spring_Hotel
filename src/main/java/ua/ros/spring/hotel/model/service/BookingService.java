@@ -40,6 +40,12 @@ public interface BookingService {
     Page<Booking>            findAll(Predicate p, Pageable pageable);
 
     /**
+     * Find all bookings
+     * @param pageable conditions to perform paginating
+     * @return page with bookings
+     */
+    Page<Booking>            findAll(Pageable pageable);
+    /**
      * Update booking
      * @param booking booking to update
      * @return operation result
@@ -48,16 +54,23 @@ public interface BookingService {
 
     /**
      * Delete booking
-     * @param booking booking to delete
+     * @param bookingId booking id to delete
      * @return operation result
      */
-    Boolean                  deleteBooking(Booking booking);
+    Boolean                  deleteBooking(Long bookingId);
+
+    /**
+     * Make payment for Booking
+     * @param bookingId booking id
+     * @return operation result
+     */
+    Boolean                  makePaymentForBooking(Long bookingId);
 
     /**
      * Get all booking dates of related apartment
      * @param apartmentIdOfBookingDates related apartment id
      * @return HashMap with check-in-date as key and check-out-date as value
      */
-    HashMap<Date, Date> findAllBookingsDatesRelatedToApartment(Long apartmentIdOfBookingDates);
+    HashMap<Date, Date>      findAllBookingsDatesRelatedToApartment(Long apartmentIdOfBookingDates);
 
 }
