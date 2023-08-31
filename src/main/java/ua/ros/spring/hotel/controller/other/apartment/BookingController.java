@@ -101,6 +101,24 @@ public class BookingController {
         return BOOKINGS_HTML;
     }
 
+    @PostMapping("/makePaymentForBooking")
+    public String makePaymentForBooking(@RequestParam(name = "bookingId") @NonNull Long bookingId
+    ) {
+        log.info("POST Make payment for booking");
+        bookingService.makePaymentForBooking(bookingId);
+
+        return "redirect:/bookings";
+    }
+
+    //TODO Добавити валідацію ролі
+    @PostMapping("/deleteBooking")
+    public String deleteBooking(@RequestParam(name = "bookingId") @NonNull Long bookingId
+    ) {
+        log.info("POST Delete booking");
+        bookingService.deleteBooking(bookingId);
+
+        return "redirect:/bookings";
+    }
 
 }
 
