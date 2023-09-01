@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> Error </title>
+</head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-5">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <h2 class="d-flex justify-content-center" th:text="#{app.error}"></h2>
+    <div class="d-flex justify-content-center">
+        <img th:src="@{/img/icons/sad-cat.jpg}" class="img">
+    </div>
+    <div th:if="${statusCode != null}">
+        <div class="d-flex justify-content-center"> <text th:text="#{app.error.statusCode}"></text>: <text th:text="${statusCode}"></text> </div>
+    </div>
+    <div th:if="${requestUri != null}">
+        <div class="d-flex justify-content-center"> <text th:text="#{app.error.requestURI}"></text>: <text th:text="${requestUri}"></text> </div>
+    </div>
+
+
+    <div class="offset-md-4">
+        <div th:if="${errorData != null}" th:each="error, iter : ${errorData}" class="row">
+
+            <h5 class="col-1 card-title" th:text="${iter.index+1}+')'"></h5>
+            <h5 class="col card-title" th:text="#{${error.errorMessage}}"></h5>
+            <!--<h5 class="card-subtitle mb-2 text-muted" th:text="${error.fieldName}"></h5>-->
+
+        </div>
+    </div>
+    <!--<c:if test="${!empty requestScope.translatedMessage}">
+        <div class="d-flex justify-content-center"> <strong><fmt:message key="app.error.message" /></strong>:
+            <fmt:message key="${requestScope.translatedMessage}" />
+        </div>
+    </c:if>
+    <c:if test="${!empty requestScope.message}">
+        <div class="d-flex justify-content-center"> <strong><fmt:message key="app.error.message" /></strong>:
+            ${requestScope.message}
+        </div>
+    </c:if>-->
+</div>
+
+
+
+</div>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
