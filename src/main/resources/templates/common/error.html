@@ -15,10 +15,10 @@
         <img th:src="@{/img/icons/sad-cat.jpg}" class="img">
     </div>
     <div th:if="${statusCode != null}">
-        <div class="d-flex justify-content-center"> <text th:text="#{app.error.statusCode}"></text>: <text th:text="${statusCode}"></text> </div>
+        <div class="d-flex justify-content-center"> <h5 th:text="#{app.error.statusCode}"></h5>: <h5 th:text="${statusCode}"></h5> </div>
     </div>
     <div th:if="${requestUri != null}">
-        <div class="d-flex justify-content-center"> <text th:text="#{app.error.requestURI}"></text>: <text th:text="${requestUri}"></text> </div>
+        <div class="d-flex justify-content-center"> <h5 th:text="#{app.error.requestURI}"></h5>: <h5 th:text="${requestUri}"></h5> </div>
     </div>
 
 

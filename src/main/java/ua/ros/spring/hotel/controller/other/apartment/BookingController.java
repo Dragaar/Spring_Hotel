@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import static ua.ros.spring.hotel.controller.constant.ControllerConstant.*;
+import static ua.ros.spring.hotel.exeption.exceptions.Message.DONT_HAVE_PERMISSION;
 
 
 @Slf4j
@@ -90,13 +91,13 @@ public class BookingController {
     ) {
         Page<Booking> bookingPage;
 
-        log.info("GET Bookings. ");
+        log.info("GET All Bookings. ");
         if(accountRoles.contains(AccountRole.ROLE_MANAGER)) {
             bookingPage = bookingService.findAll(pageable);
             model.addAttribute("page", bookingPage);
         } else {
             log.error("Try to access page without permission. Current granted auth. -> " + accountRoles);
-            throw new SecurityException("You dont have access to All users Bookings page!!", new RuntimeException());
+            throw new SecurityException(DONT_HAVE_PERMISSION, new RuntimeException());
         }
         return BOOKINGS_HTML;
     }

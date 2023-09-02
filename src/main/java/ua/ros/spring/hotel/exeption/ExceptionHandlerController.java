@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import ua.ros.spring.hotel.controller.dto.account.AccountRegistrationDTO;
 import ua.ros.spring.hotel.exeption.exceptions.BindingErrorsException;
+import ua.ros.spring.hotel.exeption.exceptions.SecurityException;
 import ua.ros.spring.hotel.model.entity.Apartment;
 
 import java.sql.Date;
@@ -40,11 +41,6 @@ public class ExceptionHandlerController {
         //ITERATE THROUGH ERRORS
         List<ObjectError> objectErrors = exception.getBindingResult().getAllErrors();
 
-        @AllArgsConstructor
-        class ErrorData{
-            //public String fieldName;
-            public String errorMessage;
-        }
         List<ErrorData> errorData = new ArrayList<>();
         errorData.add(new ErrorData(exception.getMessage()));
 
@@ -62,5 +58,24 @@ public class ExceptionHandlerController {
 
         return ERROR_HTML;
     }
+
+    @ExceptionHandler(SecurityException.class)
+    public String handleSecurityException(Model model, SecurityException exception) {
+
+        model.addAttribute("statusCode", 403);
+        model.addAttribute("errorData",
+                new ErrorData(exception.getMessage())
+        );
+
+        return ERROR_HTML;
+    }
+
+    @AllArgsConstructor
+    class ErrorData{
+        //public String fieldName;
+        public String errorMessage;
+    }
+
+
 
 }
