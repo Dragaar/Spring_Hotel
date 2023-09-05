@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@ToString(exclude = {"account", "apartment"})
+@ToString
 public class Booking implements Serializable {
 
     @Serial
@@ -46,13 +46,15 @@ public class Booking implements Serializable {
     private Boolean isPaidForReservation = false;
 
     //Foreign keys
-    @ManyToOne
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "fk_booking_account1"))
     private Account account;
 
-    @ManyToOne
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "apartment_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "fk_booking_apartment"))

@@ -42,14 +42,14 @@ public class Order implements Serializable {
 
     //Foreign keys
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id",
                 nullable = false,
                 foreignKey = @ForeignKey(name = "fk_order_account1"))
     private Account account;
 
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "response_to_order_id",
                 foreignKey = @ForeignKey(name = "fk_order_response_to_order1"))
     private ResponseToOrder responseToOrder = null;
