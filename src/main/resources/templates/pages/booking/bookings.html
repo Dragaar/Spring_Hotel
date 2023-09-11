@@ -43,7 +43,7 @@
           </tr>
           </thead>
           <tbody>
-          <!--/*@thymesVar id="booking" type="ua.ros.spring.hotel.model.entity.Booking"*/-->
+          <!--/*@thymesVar id="booking" type="ua.ros.spring.hotel.controller.dto.booking.BookingDTO"*/-->
           <div th:each="booking : ${page.content}" class="col">
 
             <tr class="numeric">
@@ -57,7 +57,7 @@
                 </div>
 
               <td>
-                <div th:if="${booking.getIsPaidForReservation() == false}">
+                <div th:if="${booking.isPaidForReservation == false}">
                   <form id="paymentForm" th:action="@{/bookings/makePaymentForBooking}" method="POST">
                     <input type="hidden" name="bookingId" th:value="${booking.id}">
                     <button type="submit" class="btn btn-info"><i class="bi bi-currency-dollar"></i></button>
@@ -66,7 +66,7 @@
               </td>
               <td>
                 <form id="apartmentForm" th:action="@{/apartments/getApartmentDetails}" method="GET">
-                  <input type="hidden" name="apartmentId" th:value="${booking.apartment.id}">
+                  <input type="hidden" name="apartmentId" th:value="${booking.apartmentId}">
                   <button type="submit" class="btn btn-primary"><i class="bi bi-info-circle"></i></button>
                 </form>
               </td>

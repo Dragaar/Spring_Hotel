@@ -1,37 +1,27 @@
 package ua.ros.spring.hotel.controller.other.apartment;
 
-import com.querydsl.core.types.Predicate;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
-import jakarta.validation.constraints.Size;
+
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ua.ros.spring.hotel.controller.dto.apartment.ApartmentDTO;
 import ua.ros.spring.hotel.controller.dto.booking.BookingDTO;
 import ua.ros.spring.hotel.exeption.exceptions.SecurityException;
 import ua.ros.spring.hotel.model.entity.AccountRole;
-import ua.ros.spring.hotel.model.entity.Apartment;
 import ua.ros.spring.hotel.model.entity.Booking;
 import ua.ros.spring.hotel.model.entity.QBooking;
 import ua.ros.spring.hotel.model.service.ApartmentService;
 import ua.ros.spring.hotel.model.service.BookingService;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import static ua.ros.spring.hotel.controller.constant.ControllerConstant.*;
 import static ua.ros.spring.hotel.exeption.exceptions.Message.DONT_HAVE_PERMISSION;
@@ -79,9 +69,12 @@ public class BookingController {
                 QBooking.booking.account.id.eq(accountId),
                 pageable);
 
-        log.info("Bookings -> " + bookingPage.getContent()) ;
+        Page<BookingDTO> bookingDTOPage =
+                bookingPage.map(booking -> modelMapper.map(booking, BookingDTO.class));
 
-        model.addAttribute("page", bookingPage);
+        log.info("Bookings -> " + bookingDTOPage.getContent()) ;
+
+        model.addAttribute("page", bookingDTOPage);
         return BOOKINGS_HTML;
     }
     @GetMapping("/all")
@@ -94,7 +87,10 @@ public class BookingController {
         log.info("GET All Bookings. ");
         if(accountRoles.contains(AccountRole.ROLE_MANAGER)) {
             bookingPage = bookingService.findAll(pageable);
-            model.addAttribute("page", bookingPage);
+            Page<BookingDTO> bookingDTOPage =
+                    bookingPage.map(booking -> modelMapper.map(booking, BookingDTO.class));
+
+            model.addAttribute("page", bookingDTOPage);
         } else {
             log.error("Try to access page without permission. Current granted auth. -> " + accountRoles);
             throw new SecurityException(DONT_HAVE_PERMISSION, new RuntimeException());

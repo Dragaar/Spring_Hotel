@@ -32,7 +32,7 @@
                     <h6 class="col-md-2 text-muted d-flex flex-row-reverse align-items-center" th:text="${apartment.price} +'&#8372'">
                     </h6>
                 </div>
-
+                <!--/*@thymesVar id="booking" type="ua.ros.spring.hotel.controller.dto.booking.BookingDTO"*/-->
                 <form th:action="@{/bookings/createBooking}" method="post" style="width: 23rem;">
 
                     <h4 class="fw-normal mt-2 mb-3 pb-3" style="letter-spacing: 1px;" th:text="#{booking.details}"></h4>

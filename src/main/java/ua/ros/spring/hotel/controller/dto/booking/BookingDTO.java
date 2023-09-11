@@ -13,12 +13,12 @@ public class BookingDTO {
 
     private Long id;
 
-    //@NotBlank
+    @NotBlank
     private String guestsNumber;
 
-    //@NotBlank
+    @NotBlank
     private Date checkInDate;
-    //@NotBlank
+    @NotBlank
     private Date checkOutDate;
 
     private Timestamp reservationData;
@@ -26,6 +26,6 @@ public class BookingDTO {
     private Boolean isPaidForReservation = false;
 
     private Long accountId;
-    //@NotNull
+    @NotNull
     private Long apartmentId;
 }
