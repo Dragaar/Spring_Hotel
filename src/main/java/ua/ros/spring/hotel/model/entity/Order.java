@@ -5,10 +5,11 @@ import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.sql.Date;
 
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -31,7 +32,7 @@ public class Order implements Serializable {
     @Column(name = "apartment_class")
     private String apartmentClass;
     @Column(name = "price")
-    private Long price;
+    private BigInteger price;
     @Column(name = "description")
     private String description;
 
