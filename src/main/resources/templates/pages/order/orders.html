@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}">
+    <title id="pageTitle"> Orders </title>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div th:if="${page.content == null}">
+        <h2 class="d-flex justify-content-center" th:text="#{order.error.cannotFind}"></h2>
+        <div class="d-flex justify-content-center">
+            <img th:src="@{/img/icons/sad-cat.jpg}" class="img">
+        </div>
+    </div>
+
+<div th:if="${page.content != null}">
+
+    <div class="container">
+
+        <h2 class="col-lg-8" th:text="#{order.list}"></h2>
+
+        <div th:if="${page}">
+            <div class="row">
+                <h4 class="col-lg-8 pt-1 mb-3" th:text="#{apartment.createApplicationMessage}"></h4>
+                <div class="col-lg-2 text-center">
+                    <a class="order-btn btn btn-primary" href="/orders/newOrder"
+                       th:text="#{apartment.createApplication}">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <script th:src="@{/js/rowNumeration.js}"></script>
+
+            <table class="table table-bordered table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" th:text="#{order.status}"></th>
+                    <th scope="col" th:text="#{order.apartmentType}"></th>
+                    <th scope="col" th:text="#{order.roomsCount}"></th>
+                    <th scope="col" th:text="#{order.guestsNumber}"></th>
+                    <th scope="col" th:text="#{order.price}"></th>
+                    <th scope="col" th:text="#{order.checkInDate}"></th>
+                    <th scope="col" th:text="#{order.checkOutDate}"></th>
+                    <th scope="col" th:text="#{order.details}"></th>
+                    <th scope="col" th:text="#{order.actions}"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--/*@thymesVar id="order" type="ua.ros.spring.hotel.controller.dto.order.OrderDTO"*/-->
+                <div th:each="order : ${page.content}" class="col">
+
+                    <tr class="numeric">
+                        <td></td>
+
+                        <div th:if="${order.responseToOrderId != null}">
+                            <td class="table-success" th:text="#{order.status.processed}"></td>
+                        </div>
+                        <div th:unless="${order.responseToOrderId != null}">
+                            <td class="table-warning" th:text="#{order.status.inProcessing}"></td>
+                        </div>
+
+                        <td th:text="${order.apartmentClass}"></td>
+                        <td th:text="${order.roomsNumber}"></td>
+                        <td th:text="${order.guestsNumber}"></td>
+                        <td th:text="${order.price}"></td>
+                        <td th:text="${order.checkInDate}"></td>
+                        <td th:text="${order.checkOutDate}"></td>
+                        <td th:text="${order.description}"></td>
+
+                        <div th:if="${order.responseToOrderId != null}">
+                            <td>
+                                <form id="responseToOrderForm" th:action="@{/orders/getResponseToOrder}" method="GET">
+                                    <input type="hidden" name="responseToOrderId" th:value="${order.responseToOrderId}">
+                                    <button type="submit" class="btn btn-primary"> <i class="bi bi-eye"></i></button>
+                                </form>
+                            </td>
+                        </div>
+                        <div th:unless="${order.responseToOrderId != null}">
+                            <td></td>
+                        </div>
+
+                        <td>
+                            <form id="deleteForm" th:action="@{/orders/deleteOrder}" method="POST">
+                                <input type="hidden" name="orderId" th:value="${order.id}">
+                                <button type="submit" class="btn btn-danger"> <i class="bi bi-trash3"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+
+                </div>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</div>
+
+<div th:replace="~{fragments/pagination :: pagination}"></div>
+
+</body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</html>
