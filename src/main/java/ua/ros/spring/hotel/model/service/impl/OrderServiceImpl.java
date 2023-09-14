@@ -2,6 +2,7 @@ package ua.ros.spring.hotel.model.service.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,8 +12,10 @@ import ua.ros.spring.hotel.model.repository.OrderRepository;
 import ua.ros.spring.hotel.model.repository.ResponseToOrderRepository;
 import ua.ros.spring.hotel.model.service.OrderService;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
+import com.querydsl.core.types.Predicate;
+@Slf4j
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService {
@@ -30,43 +33,34 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean createOrder(Order order) {
         if( order.getId() == null ) {
+            log.info("Create new Order");
             entityManager.persist(order);
             return true;
         }
         return false;
     }
 
+    @Transactional(readOnly=true)
     @Override
-    public Order findOrderByField(String field, Object value) {
-        return orderRepository.findByField(field, value).orElseThrow();
+    @SuppressWarnings("unchecked")
+    public Optional<Order> findOne(Predicate predicate) {
+        log.info("Find one Order");
+        Object reflectionObject = orderRepository.findOne(predicate);
+        return (Optional<Order>) reflectionObject;
     }
 
     @Override
-    public Page<Order> findOrders(Pageable pageable) {
-        return orderRepository.findAll(pageable);
-    }
-
-
-    @Override
-    public ArrayList<Order> findFewOrdersAndSort(String secondQueryPart, Object... fields) {
-       /* Connection connection = dbManager.getConnection();
-
-        //sql start indexing from 0
-        @SuppressWarnings("unchecked")
-        ArrayList<Order> result = (ArrayList<Order>) TransactionManager.execute(connection,
-                ()-> {
-                ArrayList<Order> r = orderDAO.getWithDynamicQuery(connection, secondQueryPart, fields);
-                rowsNumber = orderDAO.countRowsInLastQuery(connection);
-                return r;
-                }
-        );
-        return result;*/
-        throw new UnsupportedOperationException();
+    @SuppressWarnings("unchecked")
+    public Page<Order> findAll(Predicate predicate, Pageable pageable) {
+        log.info("Find all Orders");
+        Object reflectionObject = orderRepository.findAll(predicate, pageable);
+        return (Page<Order>) reflectionObject;
     }
 
     @Override
     public Boolean updateOrder(Order order) {
         if(order.getId() != null ) {
+            log.info("Update Order By Id -> " +order.getId());
             entityManager.merge(order);
             return true;
         }
@@ -80,14 +74,16 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public Boolean deleteOrder(Order order) {
+
         if(order.getResponseToOrder() != null) {
+            log.info("Delete RTO Related to Order");
             // TODO
             // видалення many to many
             // responseToOrderDAO.deleteResponseApartments(connection, order.getResponseToOrder().getId());
             rtoRepository.delete(order.getResponseToOrder());
         }
-        orderRepository.delete(order);
-        return true;
+        log.info("Delete Order By Id -> " +order.getId());
+        return orderRepository.customDeleteById(order.getId()) > 0;
     }
 
 }

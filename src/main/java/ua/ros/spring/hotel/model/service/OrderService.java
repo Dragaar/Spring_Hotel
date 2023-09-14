@@ -4,7 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.ros.spring.hotel.model.entity.Order;
 
-import java.util.ArrayList;
+import java.util.Optional;
+import com.querydsl.core.types.Predicate;
 
 /**
  * Order Service interface.
@@ -18,30 +19,22 @@ public interface OrderService {
      * @param order the order to be added
      * @return operation result
      */
-    Boolean                  createOrder(Order order);
+    Boolean                 createOrder(Order order);
 
     /**
-     * Find order by field
-     * @param field field name
-     * @param value unique field value
+     * Find order by predicate
+     * @param p conditions to receive order
      * @return found order
      */
-    Order                    findOrderByField(String field, Object value);
+    Optional<Order>       findOne(Predicate p);
 
     /**
-     * Find few orders by total count and from set start id
-     * @param pageable
-     * @return found orders
+     * Find orders by predicate
+     * @param p conditions to receive orders
+     * @param pageable conditions to perform paginating
+     * @return page with orders
      */
-    Page<Order>       findOrders(Pageable pageable);
-
-    /**
-     * Find few orders using second query part conditions and by fields for them
-     * @param secondQueryPart QueryBuilder result string
-     * @param fields fields to insert in second query part statement
-     * @return found orders
-     */
-    ArrayList<Order>         findFewOrdersAndSort(String secondQueryPart, Object... fields);
+    Page<Order>           findAll(Predicate p, Pageable pageable);
 
     /**
      * Update order
